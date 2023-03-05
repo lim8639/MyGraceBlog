@@ -1,5 +1,5 @@
 <template>
-
+  <loading v-if="isLoading"></loading>
   <div class="contont-box">
     <navbar/>
       <ul>
@@ -24,6 +24,7 @@ import {onMounted, ref} from "vue";
 import {getAllPost } from "./../../requests/index";
 import navbar from "../../components/navbar.vue";
 import footerbar from "../../components/footerbar.vue";
+import loading from "../../components/loading.vue";
 const list = ref([])
 const getPostLsit = async ()=>{
   try {
