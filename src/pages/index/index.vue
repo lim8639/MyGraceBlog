@@ -26,6 +26,7 @@ import navbar from "../../components/navbar.vue";
 import footerbar from "../../components/footerbar.vue";
 import loading from "../../components/loading.vue";
 const list = ref([])
+const isLoading = ref(true)
 const getPostLsit = async ()=>{
   try {
     const {data} = await getAllPost()
@@ -34,7 +35,7 @@ const getPostLsit = async ()=>{
   } catch (err) {
 
   } finally {
-
+    isLoading.value = false
   }
 }
 onMounted(getPostLsit)
