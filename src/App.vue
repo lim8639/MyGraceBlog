@@ -12,4 +12,12 @@
   padding: 0;
   margin: 0;
 }
+body{
+  background-color: #f3f4f5;
+}
+.page-content{
+  padding: 30px;
+  margin: auto;
+  max-width: 1200px;
+}
 </style>

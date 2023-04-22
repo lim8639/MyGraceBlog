@@ -55,6 +55,7 @@
       <h3>执行结果</h3>
     </template>
     <div  v-if="changeData.type == '1'">
+      <a-table :columns="columns" :data="table_data" />
       <a-list empty="暂无信息">
         <a-list-item  v-for="item in resultUtils" >
           {{item.title}}
@@ -65,7 +66,6 @@
       </a-list>
     </div>
     <div  v-if="changeData.type == '5'">
-
       <p v-clipboard:copy="resultUtils" v-clipboard:success="onSuccess">{{ resultUtils }}</p>
     </div>
   </a-card>
@@ -86,8 +86,24 @@ const changeData  = ref({
 const resultUtils = ref([
 
 ])
-
+// [{"hello":"hello","nice":"nice"},{"hello":"hello","nice":"nice"}]
+const columns = ref();
+const table_data = ref();
 const clickToTransfer = ()=>{
+
+  let data =  JSON.parse( changeData.value.data)
+  console.log(Object.keys(data[0]))
+  let tmp_col = []
+  for( let item in data[0]) {
+    console.log(item)
+    let item2 = {
+      title: item,
+      dataIndex: item,
+    }
+    tmp_col.push(item2)
+  }
+  table_data.value = data
+  columns.value  = tmp_col
   fetchData()
 }
 const onSuccess = ()=>{
@@ -162,7 +178,7 @@ const fetchData = async () => {
 
 <style scoped>
 .container{
-
+  max-width: 1200px;
   margin: auto;
 }
 </style>

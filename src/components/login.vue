@@ -25,11 +25,12 @@
 import {onMounted, reactive, ref} from 'vue';
 const props = defineProps(['visible'])
 console.log(props.visible)
-const visible = ref(false);
+const visible = ref(true);
 const form = reactive({
   username: '',
   password: ''
 });
+
 const handleClick = () => {
   visible.value = false;
 };

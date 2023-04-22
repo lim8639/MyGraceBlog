@@ -3,14 +3,14 @@
   <div class="contont-box">
     <navbar/>
       <ul>
-      <li v-for="(item,index) in list" :key="index"><router-link :to="'/preview/'+item.postid">
+      <li v-for="(item,index) in list" :key="index"><router-link :to="'/preview/'+item.id">
         <div class="post_item">
           <img :src="item.cover" alt="">
           <div class="post_content">
             <h2 class="title">{{item.title}}</h2><small>{{item.tags}}</small>
             <p class="p1">{{abstractFn(item.content)}}
             </p >
-            <p class="p2"><span>{{item.createtime.substr(0,10)}}</span><span>浏览量{{item.pageviews}}</span></p>
+<!--            <p class="p2"><span>{{item.createtime.substr(0,10)}}</span><span>浏览量{{item.pageviews}}</span></p>-->
           </div>
         </div>
       </router-link>
@@ -31,7 +31,7 @@ const getPostLsit = async ()=>{
   try {
     const {data} = await getAllPost()
     list.value = data
-    console.log(data);
+    console.log("数据",data);
   } catch (err) {
 
   } finally {
@@ -68,7 +68,9 @@ const abstractFn = (res)=>{
 
 
 <style scoped>
-
+ul{
+  background-color: #fff;
+}
 .contont-box{
   max-width: 1200px;
   margin: auto;

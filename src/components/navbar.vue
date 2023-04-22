@@ -5,6 +5,7 @@
       <li><router-link to="/">博客</router-link></li>
       <li><router-link to="/utils">工具</router-link></li>
       <li><router-link to="/direction">面板</router-link></li>
+      <li><router-link to="/space">空间</router-link></li>
       <li><a href="#/user" class="">管理</a></li>
     </ul>
   </nav>
