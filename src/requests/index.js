@@ -16,56 +16,71 @@ axios.interceptors.request.use(config => {
     return Promise.error(error)
 })
 
+
+
 function UploadUtils(data) {
     console.log(data)
-    return axios.post(`/utils/upload`,data)
+    return axios.post(`/utils/upload`, data)
 }
+
 // t03FKvZt9P3aLt30lhjyQ3dx54b3wAlTRZUZ7Aiv4WbRnFAgoM3OI6eea7l3Pz9SmkBrnLyE5ecClTyu5QAvAWQ7vk15zs4Jt7jAEzhz9H0_n1u6ri5yK0XR68hrF8BW8fg
 
-function getPost(id) {
+function getArticleByIdApi(id) {
     return axios.get(`/article/${id}`)
 }
-function delPost(data) {
+
+function delArticleByIdApi(data) {
     console.log(data)
-    return axios.post(`/utils/upload`,data)
+    return axios.post(`/utils/upload`, data)
 }
-function savePost(data) {
+
+function updateArticleApi(data) {
     console.log(data)
-    return axios.post(`/article/`,data)
+    return axios.put(`/article/${data.id}`, data)
 }
-function getAllPost() {
-    console.log("正在请求")
+
+function getAllArtilceApi() {
     return axios.get(`/articles`)
 }
+
 function editorAllPost() {
     return axios.get(`/postlist`)
 }
 
 function userloginApi(data) {
-    return axios.post(`/user`,data)
+    return axios.post(`/user`, data)
 }
 
-function uploadImage(form){
+function uploadImage(form) {
     return axios.post('/post/upload/', form, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            }
-        })
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    })
 
 }
 
-function getDataApi(form){
+function getDataApi(form) {
     return axios.get('/data/api')
+}
 
+function createArticle() {
+    return axios.post('/article')
+}
+function deleteArticleApi(id) {
+    return axios.delete(`/article/${id}`)
 }
 
 export {
-    UploadUtils,
-    getPost,
-    delPost,
-    getAllPost,
-    savePost,
+    createArticle,
+    getDataApi,
+    getAllArtilceApi,
     uploadImage,
     userloginApi,
-    getDataApi
+    getArticleByIdApi,
+    updateArticleApi,
+    UploadUtils,
+    deleteArticleApi
+
+
 }

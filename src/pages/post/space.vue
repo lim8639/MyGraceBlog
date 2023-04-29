@@ -1,19 +1,48 @@
 <template>
   <div class="space">
+
     <div class="left">
       <div class="sidebar">
-        <button style="z-index: 9999" @click="changePreview">
-          切换模式
-        </button>
-        <h2 class="space_title">超级空间</h2>
-        <ul class="space_list">
-          <li @click="selectPost(index)"  v-for="(item,index) in list">{{item.title}}</li>
-        </ul>
+
+        <a-space style="width: 100%;" direction="vertical" size="large">
+          <a-list size="large">
+            <template #header>
+              <router-link to="/index"> <a-button type="text" >
+                <template #icon>
+                  <icon-left-circle />
+                </template>
+                返回首页
+              </a-button>
+             </router-link>
+              <a-button type="primary" @click="addArticle">
+                <template #icon>
+                  <icon-plus />
+                </template>
+                添加新的文章
+              </a-button>
+            </template>
+            <a-list-item    @click="selectPost(index)"  v-for="(item,index) in list">
+              {{item.title}}
+              <template #actions>
+
+                <icon-edit  @click="changePreview"/>
+                <icon-delete  @click="removeArticle"/>
+              </template>
+
+            </a-list-item>
+          </a-list>
+        </a-space>
+        <a-modal v-model:visible="visible" @ok="handleOk" @cancel="handleCancel">
+          <template #title>
+            删除提示
+          </template>
+          <div> 请问您是否确认删除该文章</div>
+        </a-modal>
       </div>
     </div>
     <div v-if="!isPreview" class="content">
       <div  class="content_title">
-        <h1 contenteditable="true"><input type="text" v-model="myPost.title"></h1>
+        <h1 contenteditable="true"><input type="text" placeholder="请输入文章标题" v-model="myPost.title"></h1>
       </div>
       <md-editor
           v-model="myPost.content"
@@ -32,7 +61,8 @@
           :showCodeRowNumber="true"
           :format-copied-text="formatCopiedText"
           :footers="['markdownTotal', '=', 0, 'scrollSwitch']"
-      > <template #defToolbars>
+      >
+        <template #defToolbars>
         <EmojiExtension :on-insert="insert"></EmojiExtension>
         <MarkExtension :on-insert="insert"></MarkExtension>
         </template>
@@ -70,7 +100,13 @@
 <script setup>
 import 'md-editor-v3/lib/style.css';
 import {onMounted, reactive, ref} from "vue";
-import {getAllPost, savePost, uploadImage} from "../../requests/index.js";
+import {
+  createArticle,
+  deleteArticleApi,
+  getAllArtilceApi,
+  updateArticleApi,
+  uploadImage
+} from "../../requests/index.js";
 import MdEditor from 'md-editor-v3';
 import {useRouter} from "vue-router";
 import {checkUserStatus} from "../../components/login.js";
@@ -104,8 +140,15 @@ const state = reactive({
 });
 
 const myPost = ref({
-  title:"",
   content:"",
+  cover:"",
+  create_time:"",
+  id:"",
+  last_update_time:"",
+  nickName:"",
+  permission:"",
+  title:"",
+  user_id:""
 })
 onMounted(()=>{
   getPostLsit()
@@ -113,17 +156,63 @@ onMounted(()=>{
 const onchangePost = ()=>{
   saveMarkdown()
 }
+const addArticle = async ()=>{
+  try {
+    const {data} = await createArticle ()
+    Message.info(data.message)
+    let artilce = {
+      content:"",
+      cover:"",
+      create_time:"",
+      id:data.id,
+      last_update_time:"",
+      nickName:"",
+      permission:false,
+      title:"",
+      user_id:data.user_id
+    }
+    list.value.push(artilce)
+    selectPost(list.value.length-1)
+    isPreview.value = false
+  } catch (err) {
+    Message.error("添加失败")
+  }
+}
 
 const saveMarkdown = async ()=>{
   try {
-    const {data} = await savePost(myPost.value)
+    const {data} = await updateArticleApi(myPost.value)
     Message.info(data.message)
   } catch (err) {
 
-  } finally {
-
   }
 }
+
+const visible = ref(false);
+
+const handleOk = async () => {
+  visible.value = false;
+  try {
+    const {data} = await deleteArticleApi(myPost.value.id)
+    Message.info(data.message)
+    let newArray = []
+    for(let i =0;i<list.value.length;i++){
+      if(list.value[i].id !== myPost.value.id){
+        newArray.push(list.value[i])
+      }
+    }
+    list.value = newArray
+  } catch (err) {
+    Message.info(data.message)
+  }
+};
+const handleCancel = () => {
+  visible.value = false;
+}
+const removeArticle = ()=>{
+  visible.value = true;
+}
+
 // 上传图片
 const onUploadImg = async (files, callback) => {
   const res = await Promise.all(
@@ -142,12 +231,12 @@ const onUploadImg = async (files, callback) => {
 
 
 
-// 目录设置
+
 const list = ref([])
 const getPostLsit = async ()=>{
   try {
     console.log("数据");
-    const {data} = await getAllPost()
+    const {data} = await getAllArtilceApi()
     list.value = data
     myPost.value  = data[0]
     console.log("数据",data);
@@ -207,7 +296,6 @@ const formatCopiedText = (text) => {
   height: 100%;
   width: 100%;
   display: -webkit-flex; /* Safari */
-
   flex-direction:row;
   flex-wrap:nowrap;
   justify-content:flex-start;
@@ -234,8 +322,14 @@ const formatCopiedText = (text) => {
   line-height: 30px;
   overflow: hidden;
   height: 30px;
-  padding-left: 10px;
+  //padding-left: 10px;
   box-sizing: border-box;
+  background-color: #d4c7c7;
+  padding: 5px;
+  margin-bottom:4px ;
+}
+.sidebar > ul>li button{
+  float: right;
 }
 .sidebar >ul>li:hover{
   background-color: #42b883;
@@ -243,15 +337,19 @@ const formatCopiedText = (text) => {
   font-weight: 700;
 }
 .content{
-  flex-basis: 300px;
-  flex-grow: 1;
 
+  flex-grow: 1;
+  height: 100%;
   display: -webkit-flex;
   flex-flow: column nowrap;
   align-items:stretch;
 }
 #my-editor-preview{
   padding:30px;
+  height: 100%;
+}
+#my-editor{
+  height: 100%;
 }
 .content_title{
   order: 0;
@@ -264,7 +362,7 @@ const formatCopiedText = (text) => {
   line-height: 50px;
   padding-left: 20px;
   margin: 0;
-  box-shadow: 0 1px 40px -8px rgba(0,0,0,.5);
+  //box-shadow: 0 1px 40px -8px rgba(0,0,0,.5);
   z-index: 999;
   background-color: #fff;
 }
@@ -276,9 +374,10 @@ const formatCopiedText = (text) => {
 .my-md-editor{
   flex-basis: 100px;
   flex-grow: 1;
+  height: 100%;
 }
 .my-md-preview{
-  height: 100%;
+
   flex-grow: 1;
   padding: 0 0 0 20px;
 }

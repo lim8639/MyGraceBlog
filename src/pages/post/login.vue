@@ -1,7 +1,6 @@
 <template>
-  <div style="background-color: #00c551">
-
-    <a-form :model="form" :style="{ width: '1200px' }">
+  <div style="background-color: #93ffc0">
+    <a-form>
       <a-form-item field="name" tooltip="Please enter username" label="Username">
         <a-input
             v-model="form.username"
@@ -12,17 +11,16 @@
         <a-input v-model="form.password" placeholder="please enter your post..." />
       </a-form-item>
       <a-form-item>
-        <a-button @click="handleSubmit">Submit</a-button>
+        <a-button @click="handleSubmit">登录</a-button>
       </a-form-item>
     </a-form>
   </div>
-
 </template>
 
 <script setup>
 import  { reactive } from 'vue';
 import {useRouter} from "vue-router";
-import {savePost, userloginApi} from "../../requests/index.js";
+import { userloginApi} from "../../requests/index.js";
 import {Message} from "@arco-design/web-vue";
 
 const form = reactive({
@@ -40,6 +38,7 @@ const userLogin = async ()=>{
     const {data} = await userloginApi(form)
     if(data.code ==200){
       localStorage.setItem('token',data.data)
+      Router.push("/user")
     }
     Message.info(data.message)
   } catch (err) {

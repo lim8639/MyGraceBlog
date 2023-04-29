@@ -27,7 +27,7 @@
 import {onMounted, reactive, ref} from 'vue';
 import MdEditor from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
-import {getPost} from "../../requests/index.js";
+import {getArticleByIdApi} from "../../requests/index.js";
 import {useRouter} from "vue-router";
 import Navbar from "../../components/navbar.vue";
 

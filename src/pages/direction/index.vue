@@ -83,7 +83,7 @@ const handleCLickFullScreen = () => {
   isFullScreen.value = !isFullScreen.value;
 }
 import { getCurrentInstance } from 'vue'
-import {getPost} from "../../requests";
+
 import {useRouter} from "vue-router";
 const { appContext } = getCurrentInstance();
 
@@ -146,7 +146,7 @@ let niceQuetos = ref({hitokoto:"#hello"})
 
 const getMarkdown = async ()=>{
   try {
-    const {data} = await getPost(useRouter().currentRoute.value.params.id)
+    const {data} = await getArticleByIdApi(useRouter().currentRoute.value.params.id)
     previewData.value = data
 
     console.log(data);

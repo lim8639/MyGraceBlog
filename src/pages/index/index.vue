@@ -21,7 +21,7 @@
 </template>
 <script setup>
 import {onMounted, ref} from "vue";
-import {getAllPost } from "./../../requests/index";
+import {getAllArtilceApi} from "./../../requests/index";
 import navbar from "../../components/navbar.vue";
 import footerbar from "../../components/footerbar.vue";
 import loading from "../../components/loading.vue";
@@ -29,7 +29,7 @@ const list = ref([])
 const isLoading = ref(true)
 const getPostLsit = async ()=>{
   try {
-    const {data} = await getAllPost()
+    const {data} = await getAllArtilceApi()
     list.value = data
     console.log("数据",data);
   } catch (err) {
