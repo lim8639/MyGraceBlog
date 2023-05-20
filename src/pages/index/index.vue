@@ -18,6 +18,7 @@
     </ul>
     <footerbar/>
   </div>
+
 </template>
 <script setup>
 import {onMounted, ref} from "vue";
@@ -25,6 +26,7 @@ import {getAllArtilceApi} from "./../../requests/index";
 import navbar from "../../components/navbar.vue";
 import footerbar from "../../components/footerbar.vue";
 import loading from "../../components/loading.vue";
+import {createWebHashHistory} from "vue-router";
 const list = ref([])
 const isLoading = ref(true)
 const getPostLsit = async ()=>{
@@ -37,6 +39,12 @@ const getPostLsit = async ()=>{
   } finally {
     isLoading.value = false
   }
+}
+
+const content = ref(null)
+const changeApp = ()=>{
+  console.log(content.value)
+  content.value.setAttribute('src',"http://yy-zhaoshang.jd.com/merchantsClue")
 }
 onMounted(getPostLsit)
 const abstractFn = (res)=>{
@@ -65,9 +73,13 @@ const abstractFn = (res)=>{
 
 </script>
 
-
-
 <style scoped>
+#app2{
+  width: 100%;
+  height: 100vh;
+  box-sizing: border-box;
+  overflow-y: hidden;
+}
 ul{
   background-color: #fff;
 }

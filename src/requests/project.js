@@ -21,13 +21,17 @@ function  createProjectApi(){
     return axios.post("/project/")
 }
 
-function  getProjectsApi(limit,offset){
-    return axios.get("/projects/",{
-        limit:limit,
-        offset:offset,
-    })
+function  getProjectsApi(data){
+
+    return axios({
+            method:"GET",
+            url:"/projects/",
+            params:data
+            })
+
 }
 function  updateProjectsApi(data){
+
     return axios.put(`/project/${data.id}`,data)
 }
 function  deleteProjectsApi(id){

@@ -3,7 +3,6 @@
 
     <div class="left">
       <div class="sidebar">
-
         <a-space style="width: 100%;" direction="vertical" size="large">
           <a-list size="large">
             <template #header>
@@ -22,7 +21,7 @@
               </a-button>
             </template>
             <a-list-item    @click="selectPost(index)"  v-for="(item,index) in list">
-              {{item.title}}
+              {{item.title  === undefined?"":item.title}}
               <template #actions>
 
                 <icon-edit  @click="changePreview"/>
@@ -43,7 +42,9 @@
     <div v-if="!isPreview" class="content">
       <div  class="content_title">
         <h1 contenteditable="true"><input type="text" placeholder="请输入文章标题" v-model="myPost.title"></h1>
+
       </div>
+      <div><span>{{saveMessage}}</span></div>
       <md-editor
           v-model="myPost.content"
           :editorId="state.id"
@@ -53,6 +54,7 @@
           @on-save="onchangePost"
           :toolbars="toolbars"
           ref="editorRef"
+          @onChange="autoSaving"
           auto-detect-code
           show-code-row-number
           @on-upload-img="onUploadImg"
@@ -138,7 +140,25 @@ const state = reactive({
   previewTheme: 'vuepress',
   codeTheme: 'a11y',
 });
+let saveMessage = ref("保存中")
+let timer = false;
+function debounce (fn, delay = 300){
 
+  return function (...args) {
+    clearTimeout(timer)
+    timer = setTimeout(()=>{
+      fn.call(this, ...args)
+    }, delay);
+  }
+}
+
+const autoSaving = ()=>{
+  saveMessage.value = "保存中...."
+  clearTimeout(timer)
+  timer = setTimeout(()=>{
+    saveMarkdown()
+  }, 300);
+}
 const myPost = ref({
   content:"",
   cover:"",
@@ -182,12 +202,36 @@ const addArticle = async ()=>{
 const saveMarkdown = async ()=>{
   try {
     const {data} = await updateArticleApi(myPost.value)
-    Message.info(data.message)
-  } catch (err) {
+    saveMessage.value = "保存成功"+new Date().Format("yyyy-MM-dd hh:mm:ss");
 
+  } catch (err) {
+    saveMessage.value = "保存失败"
+    Message.error("保存失败"+err)
   }
 }
+// 对Date的扩展，将 Date 转化为指定格式的String
+// 月(M)、日(d)、小时(h)、分(m)、秒(s)、季度(q) 可以用 1-2 个占位符，
+// 年(y)可以用 1-4 个占位符，毫秒(S)只能用 1 个占位符(是 1-3 位的数字)
+// 例子：
+// (new Date()).Format("yyyy-MM-dd hh:mm:ss.S") ==> 2006-07-02 08:09:04.423
+// (new Date()).Format("yyyy-M-d h:m:s.S") ==> 2006-7-2 8:9:4.18
 
+Date.prototype.Format = function (fmt) { // author: meizz
+  var o = {
+    "M+": this.getMonth() + 1, // 月份
+    "d+": this.getDate(), // 日
+    "h+": this.getHours(), // 小时
+    "m+": this.getMinutes(), // 分
+    "s+": this.getSeconds(), // 秒
+    "q+": Math.floor((this.getMonth() + 3) / 3), // 季度
+    "S": this.getMilliseconds() // 毫秒
+  };
+  if (/(y+)/.test(fmt))
+    fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+  for (var k in o)
+    if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+  return fmt;
+}
 const visible = ref(false);
 
 const handleOk = async () => {
@@ -235,11 +279,11 @@ const onUploadImg = async (files, callback) => {
 const list = ref([])
 const getPostLsit = async ()=>{
   try {
-    console.log("数据");
     const {data} = await getAllArtilceApi()
     list.value = data
-    myPost.value  = data[0]
-    console.log("数据",data);
+    if(data.length != 0){
+      myPost.value = data[0]
+    }
   } catch (err) {
 
   } finally {

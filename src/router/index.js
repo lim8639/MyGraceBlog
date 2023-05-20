@@ -9,6 +9,7 @@ import direction from './../pages/direction/index.vue'
 import preview_edit from './../pages/post/preview_edit.vue'
 import lib from './../pages/lib/index.vue'
 import post from '../pages/post/space.vue'
+import todo from '../pages/post/todo.vue'
 import space from '../pages/post/space.vue'
 import login from '../pages/post/login.vue'
 import user from '../pages/user/index.vue'
@@ -21,8 +22,8 @@ const routes = [
     {    path: '/test',    name: 'test',    component: utils  },
     {    path: '/user',    name: 'user',    component: user  },
     {    path: '/test',    name: 'test',    component: test  },
+    {    path: '/todo',    name: 'todo',    component: todo  },
     {    path: '/preview/:id',    name: 'preview',    component: preview  },
-
     {    path: '/direction',    name: 'direction',    component: direction  },
     {    path: '/space/:id?',    name: 'space',    component: space  },
     {    path: '/preview_edit',    name: 'preview_edit',    component: preview_edit  },
